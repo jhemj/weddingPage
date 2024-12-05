@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Invitation</title>
+    <style>
+        /* 기존 스타일 유지 */
+
+        body, html {
+            height: 200%;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Maruburi', Arial, sans-serif;
+            background-color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        /* 카드 컨테이너 */
+        .card-container {
+            perspective: 1000px;
+            width: 100%;
+            max-width: 350px;
+            height: 500px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: transform 1s;
+            z-index: 2;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            transition: transform 1s;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+
+        .card .front, .card .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            /* box-shadow 제거 */
+        }
+
+        .card .front {
+            background: #ffffff;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card .back {
+            background: #ffffff;
+            transform: rotateY(180deg);
+        }
+
+        /* 카드 뒤집기 시 내용 스타일 */
+        .card .front h1 {
+            color: #333;
+        }
+
+        .card .back-content {
+            border: 2px solid #8D9F6B;
+            background-color: white;
+            padding: 20px;
+            font-family: 'Maruburi';
+            width: 80%;
+            height: 85%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: auto; /* 내용이 많을 경우 스크롤 */
+        }
+
+        .card .back h1 {
+            color: #fff;
+        }
+
+        /* 초록색 카드 컨테이너 */
+        .green-card-container {
+            width: 300px; /* 3:4 비율 */
+            height: 255px; /* 3:4 비율 */
+            background-color: transparent; /* 내부 카드가 배경을 가짐 */
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, 100%); /* 초기 위치: 화면 아래 */
+            opacity: 0;
+            transition: transform 1s ease-out, opacity 1s ease-out;
+            /* box-shadow 제거 */
+            /* box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); */
+            z-index: 3;
+            perspective: 1000px; /* 플립을 위한 원근감 추가 */
+        }
+
+        /* 초록색 카드가 보일 때 위치 및 투명도 */
+        .green-card-container.visible {
+            opacity: 1;
+            transform: translate(-50%, -50%); /* 화면 중간으로 슬라이드 업 */
+        }
+
+        /* 초록색 카드 내부 */
+        .green-card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s;
+        }
+
+        /* Flip 클래스가 추가되면 회전 */
+        .green-card.flip {
+            transform: rotateY(180deg);
+        }
+
+        /* 앞면과 뒷면 */
+        .green-card .front, .green-card .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* 그림자 개별 적용 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 앞면 */
+        .green-card .front {
+            background-color: #8D9F6B;
+            /* 그림자 아래쪽 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 뒷면 */
+        .green-card .back {
+            background-color: #8D9F6B;
+            transform: rotateY(180deg);
+            /* 그림자 위쪽으로 */
+            box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 초록색 카드 내용 */
+        .green-card-content {
+            color: white;
+            text-align: center;
+            font-size: 1em;
+            padding: 20px;
+            white-space: pre-line; /* \n을 <br>로 처리 */
+        }
+
+        /* 지도 컨테이너 스타일 */
+        .map-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        @font-face {
+            font-family: 'Maruburi';
+            src: url('./font/MaruBuri-Regular.ttf') format('truetype');
+        }
+
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <div class="card" id="invitationCard">
+            <div class="front" style="background-image: url('data/page1.png');">
+                <!-- Front content can be added here if needed -->
+            </div>
+            <div class="back">
+                <div class="back-content">
+                    <p style="font-size: 0.8em; line-height: 1.5; text-align: center;">
+                        풋풋한 사랑으로 틔운 작은 싹을<br>
+                        잔드근히 다져온 서로의 인생에<br>
+                        이제, 하나의 이름으로 옮겨 심으려 합니다.<br><br>
+                        오는 25년의 식목일,<br>
+                        저희 두 사람의 소중한 시작을<br>
+                        함께 축복해 주시면 감사하겠습니다.<br><br><br>
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <div style="text-align: center; font-size: 0.8em; line-height: 1.5;">이성호 김지은의 아들<br>이진혁</div>
+                            <span style="margin: 0 10px; font-size: 1.5;">&</span>
+                            <div style="text-align: center; font-size: 0.8em; line-height: 1.5;">최종오 조정희의 딸<br>최민주</div>
+                        </div><br><br>
+                        <div style="text-align: center; font-size: 0.8em; line-height: 1.5;">2025년 4월 5일 토요일 1시<br>퀸벨호텔 1층 브리에가든홀</div>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 수정된 초록색 카드 컨테이너 -->
+    <div class="green-card-container" id="greenCard">
+        <div class="green-card">
+            <div class="front">
+                <div class="green-card-content">
+                    <p style="font-size: 0.8em; line-height: 1; text-align: center;">
+                    처음 마주하는 두 사람의 낯선길,<br>
+                    그 앞을 난연히 비춰주실 소중한 분을 모십니다.
+                </p>
+                </div>
+            </div>
+            <div class="back">
+                <div class="green-card-content">
+                    <!-- 카카오 지도 삽입 시작 -->
+                    <div class="map-container">
+                        <!-- * 카카오맵 - 지도퍼가기 -->
+                        <!-- 1. 지도 노드 -->
+                        <div id="daumRoughmapContainer1733358222010" class="root_daum_roughmap root_daum_roughmap_landing"></div>
+                        
+                        <!--
+                        	2. 설치 스크립트
+                        	* 지도 퍼가기 서비스를 2개 이상 넣을 경우, 설치 스크립트는 하나만 삽입합니다.
+                        -->
+                        <script charset="UTF-8" class="daum_roughmap_loader_script" src="https://ssl.daumcdn.net/dmaps/map_js_init/roughmapLoader.js"></script>
+                        
+                        <!-- 3. 실행 스크립트 -->
+                        <script charset="UTF-8">
+                        	new daum.roughmap.Lander({
+                        		"timestamp" : "1733358222010",
+                        		"key" : "2mf77",
+                        		"mapWidth" : "640",
+                        		"mapHeight" : "360"
+                        	}).render();
+                        </script>
+                    </div>
+                    <!-- 카카오 지도 삽입 종료 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('scroll', () => {
+            const card = document.getElementById('invitationCard');
+            const greenCardContainer = document.getElementById('greenCard');
+            const greenCard = greenCardContainer.querySelector('.green-card');
+            const scrollPosition = window.scrollY;
+            const triggerHeight = window.innerHeight / 3;
+            const secondTriggerHeight = triggerHeight + 300; // 두 번째 트리거 포인트
+            const flipTriggerHeight = secondTriggerHeight + 500; // 세 번째 트리거 포인트 (추가 뒤집기)
+
+            // 카드 뒤집기
+            if (scrollPosition > triggerHeight && !card.classList.contains('flipped')) {
+                card.style.transform = 'rotateY(180deg)';
+                card.classList.add('flipped');
+            } else if (scrollPosition <= triggerHeight && card.classList.contains('flipped')) {
+                card.style.transform = 'rotateY(0deg)';
+                card.classList.remove('flipped');
+                // 원래 상태로 되돌릴 때 초록색 카드도 숨기기
+                greenCardContainer.classList.remove('visible');
+                greenCard.classList.remove('flip');
+            }
+
+            // 카드 위로 올리기 및 초록색 카드 보이기
+            if (scrollPosition > secondTriggerHeight && !greenCardContainer.classList.contains('visible')) {
+                // 카드가 이미 뒤집혀 있는지 확인
+                if (card.classList.contains('flipped')) {
+                    card.style.transform = 'rotateY(180deg) translateY(-50%)';
+                } else {
+                    card.style.transform = 'translateY(-100vh)';
+                }
+                greenCardContainer.classList.add('visible');
+            } else if (scrollPosition <= secondTriggerHeight && greenCardContainer.classList.contains('visible')) {
+                // 기존 카드가 뒤집혀 있는지 확인 후 적절한 위치로 복귀
+                if (card.classList.contains('flipped')) {
+                    card.style.transform = 'rotateY(180deg)';
+                } else {
+                    card.style.transform = 'rotateY(0deg)';
+                }
+                greenCardContainer.classList.remove('visible');
+                greenCard.classList.remove('flip');
+            }
+
+            // 초록색 카드 뒤집기
+            if (scrollPosition > flipTriggerHeight && !greenCard.classList.contains('flip')) {
+                greenCard.classList.add('flip');
+            } else if (scrollPosition <= flipTriggerHeight && greenCard.classList.contains('flip')) {
+                greenCard.classList.remove('flip');
+            }
+        });
+    </script>
+</body>
+</html>
